@@ -1,3 +1,4 @@
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState } from "react";
 import {
   Container,
@@ -38,6 +39,14 @@ function RegisterPage() {
 
   return (
     <Container maxWidth="sm" sx={{ mt: 10 }}>
+      <Button
+  variant="outlined"
+  startIcon={<ArrowBackIcon />}
+  sx={{ mb: 2 }}
+  onClick={() => navigate(-1)}
+>
+  Back
+</Button>
       <Paper sx={{ p: 4 }}>
         <Typography variant="h4">Register User</Typography>
 

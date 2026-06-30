@@ -1,3 +1,4 @@
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Paper, Typography, Button, Box } from "@mui/material";
@@ -22,6 +23,14 @@ function AdminDashboard() {
 
   return (
     <Container sx={{ mt: 5 }}>
+      <Button
+  variant="outlined"
+  startIcon={<ArrowBackIcon />}
+  sx={{ mb: 2 }}
+  onClick={() => navigate(-1)}
+>
+  Back
+</Button>
         <LogoutButton />
       <Paper sx={{ p: 4 }}>
         <Typography variant="h4" gutterBottom>

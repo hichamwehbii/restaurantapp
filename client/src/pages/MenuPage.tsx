@@ -1,3 +1,4 @@
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState } from "react";
 import {
   Container,
@@ -82,6 +83,14 @@ function MenuPage() {
 
   return (
     <Container sx={{ mt: 4 }}>
+      <Button
+  variant="outlined"
+  startIcon={<ArrowBackIcon />}
+  sx={{ mb: 2 }}
+  onClick={() => navigate(-1)}
+>
+  Back
+</Button>
       <Typography variant="h4">
         Table {tableId}
       </Typography>

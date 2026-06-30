@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
   Container,
   Typography,
   Paper,
   Button,
   Divider,
+  TextField,
 } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import LogoutButton from "./LogoutButton";
 
 function TableOrderPage() {
@@ -15,6 +17,7 @@ function TableOrderPage() {
   const navigate = useNavigate();
 
   const [order, setOrder] = useState<any>(null);
+  const [paidMoney, setPaidMoney] = useState("");
 
   async function loadOrder() {
     try {
@@ -48,8 +51,15 @@ function TableOrderPage() {
     );
   }
 
+  const change = Number(paidMoney) - getTotal();
+
   async function finishPayment() {
     if (!order) return;
+
+    if (Number(paidMoney) < getTotal()) {
+      alert("Not enough money.");
+      return;
+    }
 
     await axios.put(
       `http://localhost:5000/api/orders/${order._id}`,
@@ -60,7 +70,7 @@ function TableOrderPage() {
 
     localStorage.removeItem(`table-${tableId}`);
 
-    alert("Payment completed");
+    alert(`Payment completed.\nChange: $${change}`);
 
     navigate("/tables");
   }
@@ -68,6 +78,15 @@ function TableOrderPage() {
   if (!order) {
     return (
       <Container sx={{ mt: 4 }}>
+        <Button
+          variant="outlined"
+          startIcon={<ArrowBackIcon />}
+          sx={{ mb: 2 }}
+          onClick={() => navigate("/tables")}
+        >
+          Back
+        </Button>
+
         <Typography variant="h4">
           No active order for Table {tableId}
         </Typography>
@@ -87,6 +106,15 @@ function TableOrderPage() {
     <Container sx={{ mt: 4 }}>
       <LogoutButton />
 
+      <Button
+        variant="outlined"
+        startIcon={<ArrowBackIcon />}
+        sx={{ mb: 2 }}
+        onClick={() => navigate("/tables")}
+      >
+        Back
+      </Button>
+
       <Typography variant="h4" gutterBottom>
         Table {tableId}
       </Typography>
@@ -99,10 +127,9 @@ function TableOrderPage() {
         <Divider sx={{ my: 2 }} />
 
         {order.items.map((item: any, index: number) => (
-          <Typography key={index}>
-            {item.name} × {item.quantity}
-            {"  "}
-            ${item.price * item.quantity}
+          <Typography key={index} sx={{ mb: 1 }}>
+            {item.name} × {item.quantity} = $
+            {item.price * item.quantity}
           </Typography>
         ))}
 
@@ -110,6 +137,19 @@ function TableOrderPage() {
 
         <Typography variant="h5">
           Total: ${getTotal()}
+        </Typography>
+
+        <TextField
+          fullWidth
+          type="number"
+          label="Money Received"
+          value={paidMoney}
+          sx={{ mt: 3 }}
+          onChange={(e) => setPaidMoney(e.target.value)}
+        />
+
+        <Typography variant="h6" sx={{ mt: 2 }}>
+          Change: ${change > 0 ? change : 0}
         </Typography>
 
         <Button
