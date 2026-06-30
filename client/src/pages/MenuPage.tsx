@@ -8,10 +8,11 @@ import {
   Stack,
 } from "@mui/material";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function MenuPage() {
   const { tableId } = useParams();
+  const navigate = useNavigate();
 
   const menu = [
     { name: "Shawarma", price: 8 },
@@ -23,21 +24,59 @@ function MenuPage() {
   const [orderItems, setOrderItems] = useState<any[]>([]);
 
   function addItem(item: any) {
-    setOrderItems([...orderItems, item]);
+    const existingItem = orderItems.find(
+      (orderItem) => orderItem.name === item.name
+    );
+
+    if (existingItem) {
+      setOrderItems(
+        orderItems.map((orderItem) =>
+          orderItem.name === item.name
+            ? {
+                ...orderItem,
+                quantity: orderItem.quantity + 1,
+              }
+            : orderItem
+        )
+      );
+    } else {
+      setOrderItems([
+        ...orderItems,
+        {
+          ...item,
+          quantity: 1,
+        },
+      ]);
+    }
   }
 
   async function submitOrder() {
-    await axios.post("http://localhost:5000/api/orders", {
-      tableNumber: tableId,
-      items: orderItems,
-    });
+    if (orderItems.length === 0) {
+      alert("Please add items first");
+      return;
+    }
 
-    alert("Order sent to kitchen");
-    setOrderItems([]);
+    try {
+      await axios.post("http://localhost:5000/api/orders", {
+        tableId,
+        items: orderItems,
+      });
+
+      // Make this table occupied
+      localStorage.setItem(`table-${tableId}`, "occupied");
+
+      alert("Order sent to kitchen");
+
+      setOrderItems([]);
+
+      navigate(`/table/${tableId}`);
+    } catch (error) {
+      alert("Failed to send order");
+    }
   }
 
   const total = orderItems.reduce(
-    (sum, item) => sum + item.price,
+    (sum, item) => sum + item.price * item.quantity,
     0
   );
 
@@ -72,6 +111,16 @@ function MenuPage() {
       </Stack>
 
       <Typography variant="h5" sx={{ mt: 4 }}>
+        Current Order
+      </Typography>
+
+      {orderItems.map((item) => (
+        <Typography key={item.name}>
+          {item.name} × {item.quantity}
+        </Typography>
+      ))}
+
+      <Typography variant="h5" sx={{ mt: 2 }}>
         Total: ${total}
       </Typography>
 

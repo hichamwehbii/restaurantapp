@@ -12,16 +12,13 @@ import {
 } from "@mui/material";
 
 function KitchenPage() {
-  const [orders, setOrders] =useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
 
   async function loadOrders() {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/orders"
-      );
-
+      const response = await axios.get("http://localhost:5000/api/orders");
       setOrders(response.data);
-    } catch (error) {
+    } catch {
       alert("Cannot load orders");
     }
   }
@@ -29,38 +26,32 @@ function KitchenPage() {
   useEffect(() => {
     loadOrders();
 
-    // Refresh every 5 seconds
-    const interval = setInterval(loadOrders, 5000);
+    const interval = setInterval(loadOrders, 3000);
 
     return () => clearInterval(interval);
   }, []);
 
   async function updateStatus(id: string, status: string) {
     try {
-      await axios.put(
-        `http://localhost:5000/api/orders/${id}`,
-        {
-          status,
-        }
-      );
+      await axios.put(`http://localhost:5000/api/orders/${id}`, {
+        status,
+      });
 
       loadOrders();
-    } catch (error) {
+    } catch {
       alert("Failed to update order");
     }
   }
 
   return (
-
     <Container sx={{ mt: 4 }}>
-  <LogoutButton />
+      <LogoutButton />
+
       <Typography variant="h4" gutterBottom>
         👨‍🍳 Kitchen Orders
       </Typography>
 
-      {orders.length === 0 && (
-        <Typography>No orders yet.</Typography>
-      )}
+      {orders.length === 0 && <Typography>No orders yet.</Typography>}
 
       {orders.map((order) => (
         <Paper
@@ -72,11 +63,7 @@ function KitchenPage() {
           }}
         >
           <Typography variant="h6">
-            🍽 Table {order.tableId || order.tableNumber}
-          </Typography>
-
-          <Typography sx={{ mt: 1 }}>
-            Status:
+            🍽 Table {order.tableId}
           </Typography>
 
           <Chip
@@ -88,14 +75,12 @@ function KitchenPage() {
                 ? "warning"
                 : "default"
             }
-            sx={{ mb: 2 }}
+            sx={{ mt: 1, mb: 2 }}
           />
 
           <Divider sx={{ mb: 2 }} />
 
-          <Typography variant="subtitle1">
-            Order Items
-          </Typography>
+          <Typography variant="subtitle1">Order Items</Typography>
 
           {order.items.map((item: any, index: number) => (
             <Typography key={index}>
@@ -103,17 +88,11 @@ function KitchenPage() {
             </Typography>
           ))}
 
-          <Stack
-            direction="row"
-            spacing={2}
-            sx={{ mt: 3 }}
-          >
+          <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
             <Button
               variant="contained"
               color="warning"
-              onClick={() =>
-                updateStatus(order._id, "Preparing")
-              }
+              onClick={() => updateStatus(order._id, "Preparing")}
             >
               Preparing
             </Button>
@@ -121,9 +100,7 @@ function KitchenPage() {
             <Button
               variant="contained"
               color="success"
-              onClick={() =>
-                updateStatus(order._id, "Ready")
-              }
+              onClick={() => updateStatus(order._id, "Ready")}
             >
               Ready
             </Button>

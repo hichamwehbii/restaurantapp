@@ -7,6 +7,7 @@ import TablesPage from "./pages/TablesPage";
 import MenuPage from "./pages/MenuPage";
 import KitchenPage from "./pages/KitchenPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import TableOrderPage from "./pages/TableOrderPage";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         {/* KITCHEN (CHEF) */}
         {/* ===================== */}
         <Route path="/kitchen" element={<KitchenPage />} />
+        <Route path="/table/:tableId" element={<TableOrderPage />} />
       </Routes>
     </BrowserRouter>
   );
