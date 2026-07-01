@@ -4,6 +4,7 @@ import { PORT } from "./config/env";
 import { connectDB } from "./config/db";
 import { authRouter } from "./features/auth/auth.router";
 import { ordersRouter } from "./features/orders/orders.router";
+import { menuRouter } from "./features/menu/menu.router";
 
 const app = express();
 
@@ -14,6 +15,7 @@ connectDB();
 
 app.use("/api", authRouter);
 app.use("/api/orders", ordersRouter);
+app.use("/api/menu", menuRouter);
 
 app.get("/", (req, res) => {
   res.send("Restaurant API Running");
