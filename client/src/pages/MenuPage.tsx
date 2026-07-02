@@ -1,30 +1,51 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  Container,
-  Typography,
+  Button,
   Card,
   CardContent,
-  Button,
+  Container,
   Stack,
+  Typography,
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+
+type MenuItem = {
+  _id: string;
+  name: string;
+  price: number;
+  category: string;
+  available: boolean;
+};
+
+type OrderItem = {
+  name: string;
+  price: number;
+  quantity: number;
+};
 
 function MenuPage() {
   const { tableId } = useParams();
   const navigate = useNavigate();
 
-  const menu = [
-    { name: "Shawarma", price: 8 },
-    { name: "Burger", price: 7 },
-    { name: "Pepsi", price: 2 },
-    { name: "Tabbouleh", price: 5 },
-  ];
+  const [menu, setMenu] = useState<MenuItem[]>([]);
+  const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
 
-  const [orderItems, setOrderItems] = useState<any[]>([]);
+  useEffect(() => {
+    async function fetchMenu() {
+      try {
+        const response = await axios.get("http://localhost:5000/api/menu");
+        setMenu(response.data.filter((item: MenuItem) => item.available));
+      } catch {
+        alert("Failed to load menu");
+      }
+    }
 
-  function addItem(item: any) {
+    fetchMenu();
+  }, []);
+
+  function addItem(item: MenuItem) {
     const existingItem = orderItems.find(
       (orderItem) => orderItem.name === item.name
     );
@@ -44,7 +65,8 @@ function MenuPage() {
       setOrderItems([
         ...orderItems,
         {
-          ...item,
+          name: item.name,
+          price: item.price,
           quantity: 1,
         },
       ]);
@@ -63,7 +85,6 @@ function MenuPage() {
         items: orderItems,
       });
 
-      // Make this table occupied
       localStorage.setItem(`table-${tableId}`, "occupied");
 
       alert("Order sent to kitchen");
@@ -71,7 +92,7 @@ function MenuPage() {
       setOrderItems([]);
 
       navigate(`/table/${tableId}`);
-    } catch (error) {
+    } catch {
       alert("Failed to send order");
     }
   }
@@ -84,28 +105,25 @@ function MenuPage() {
   return (
     <Container sx={{ mt: 4 }}>
       <Button
-  variant="outlined"
-  startIcon={<ArrowBackIcon />}
-  sx={{ mb: 2 }}
-  onClick={() => navigate(-1)}
->
-  Back
-</Button>
-      <Typography variant="h4">
-        Table {tableId}
-      </Typography>
+        variant="outlined"
+        startIcon={<ArrowBackIcon />}
+        sx={{ mb: 2 }}
+        onClick={() => navigate(-1)}
+      >
+        Back
+      </Button>
+
+      <Typography variant="h4">Table {tableId}</Typography>
 
       <Stack spacing={2} sx={{ mt: 3 }}>
         {menu.map((item) => (
-          <Card key={item.name}>
+          <Card key={item._id}>
             <CardContent>
-              <Typography variant="h6">
-                {item.name}
-              </Typography>
+              <Typography variant="h6">{item.name}</Typography>
 
-              <Typography>
-                ${item.price}
-              </Typography>
+              <Typography color="text.secondary">{item.category}</Typography>
+
+              <Typography>${item.price}</Typography>
 
               <Button
                 variant="contained"
@@ -125,7 +143,7 @@ function MenuPage() {
 
       {orderItems.map((item) => (
         <Typography key={item.name}>
-          {item.name} × {item.quantity}
+          {item.name} x {item.quantity}
         </Typography>
       ))}
 

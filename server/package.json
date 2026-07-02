@@ -2,14 +2,15 @@
   "name": "restaurantapp",
   "version": "1.0.0",
   "scripts": {
-    "dev": "ts-node-dev index.ts"
+    "dev": "ts-node-dev src/index.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "mongoose": "^9.7.2"
+    "mongoose": "^9.7.2",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
