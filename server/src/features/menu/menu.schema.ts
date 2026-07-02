@@ -1,26 +1,8 @@
-import mongoose from "mongoose";
+import { z } from "zod";
 
-export const menuItemSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    price: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    category: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    available: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  { timestamps: true }
-);
+export const createMenuItemSchema = z.object({
+  name: z.string().trim().min(1),
+  price: z.coerce.number().min(0),
+  category: z.string().trim().min(1),
+  available: z.boolean().optional(),
+});

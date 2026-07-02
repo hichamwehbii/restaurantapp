@@ -1,12 +1,19 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
 import { User } from "./auth.model";
+import { loginSchema, registerSchema } from "./auth.schema";
 
 export const authRouter = Router();
 
 authRouter.post("/register", async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const parsedBody = registerSchema.safeParse(req.body);
+
+    if (!parsedBody.success) {
+      return res.status(400).json({ message: "Invalid registration data" });
+    }
+
+    const { name, email, password, role } = parsedBody.data;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -27,7 +34,13 @@ authRouter.post("/register", async (req, res) => {
 
 authRouter.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const parsedBody = loginSchema.safeParse(req.body);
+
+    if (!parsedBody.success) {
+      return res.status(400).json({ message: "Invalid login data" });
+    }
+
+    const { email, password } = parsedBody.data;
 
     const user = await User.findOne({ email });
 

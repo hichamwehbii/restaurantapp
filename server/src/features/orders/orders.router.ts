@@ -1,11 +1,18 @@
 import { Router } from "express";
 import { Order } from "./orders.model";
+import { createOrderSchema, updateOrderStatusSchema } from "./orders.schema";
 
 export const ordersRouter = Router();
 
 ordersRouter.post("/", async (req, res) => {
   try {
-    const { tableId, items } = req.body;
+    const parsedBody = createOrderSchema.safeParse(req.body);
+
+    if (!parsedBody.success) {
+      return res.status(400).json({ message: "Invalid order data" });
+    }
+
+    const { tableId, items } = parsedBody.data;
 
     const existingOrder = await Order.findOne({
       tableId,
@@ -65,7 +72,13 @@ ordersRouter.get("/", async (req, res) => {
 
 ordersRouter.put("/:id", async (req, res) => {
   try {
-    const { status } = req.body;
+    const parsedBody = updateOrderStatusSchema.safeParse(req.body);
+
+    if (!parsedBody.success) {
+      return res.status(400).json({ message: "Invalid order status" });
+    }
+
+    const { status } = parsedBody.data;
 
     const order = await Order.findByIdAndUpdate(
       req.params.id,

@@ -1,12 +1,13 @@
-import mongoose from "mongoose";
+import { z } from "zod";
 
-export const userSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  password: String,
-  role: {
-    type: String,
-    enum: ["admin", "waiter", "chef"],
-    default: "waiter",
-  },
+export const registerSchema = z.object({
+  name: z.string().trim().min(1),
+  email: z.string().trim().email(),
+  password: z.string().min(1),
+  role: z.enum(["admin", "waiter", "chef"]).optional(),
+});
+
+export const loginSchema = z.object({
+  email: z.string().trim().email(),
+  password: z.string().min(1),
 });

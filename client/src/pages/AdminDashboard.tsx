@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
+  Chip,
   Container,
   Divider,
   FormControlLabel,
@@ -81,124 +82,204 @@ function AdminDashboard() {
     }
   }
 
-  function logout() {
-    localStorage.removeItem("role");
-    navigate("/");
-  }
-
   return (
-    <Container sx={{ mt: 5, mb: 5 }}>
-      <Button
-        variant="outlined"
-        startIcon={<ArrowBackIcon />}
-        sx={{ mb: 2 }}
-        onClick={() => navigate(-1)}
+    <Container maxWidth="lg" sx={{ py: 5 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: 2,
+          mb: 3,
+        }}
       >
-        Back
-      </Button>
+        <Button
+          variant="outlined"
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate(-1)}
+        >
+          Back
+        </Button>
 
-      <LogoutButton />
+        <LogoutButton />
+      </Box>
 
-      <Paper sx={{ p: 4 }}>
-        <Typography variant="h4" gutterBottom>
+      <Paper
+        sx={{
+          p: { xs: 3, md: 4 },
+          borderRadius: 2,
+          border: "1px solid #e6e8ef",
+          boxShadow: "0 18px 45px rgba(31, 41, 55, 0.08)",
+          mb: 3,
+        }}
+      >
+        <Typography variant="overline" sx={{ color: "#c2410c", fontWeight: 700 }}>
+          Restaurant Admin
+        </Typography>
+
+        <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
           Admin Dashboard
         </Typography>
 
-        <Typography variant="body1" sx={{ mb: 3 }}>
-          Welcome Admin! Manage your restaurant system here.
+        <Typography sx={{ color: "text.secondary", mb: 3 }}>
+          Manage tables, menu items, and kitchen orders from one place.
         </Typography>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <Button variant="contained" onClick={() => navigate("/tables")}>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" },
+            gap: 2,
+          }}
+        >
+          <Button variant="contained" size="large" onClick={() => navigate("/tables")}>
             Manage Tables
           </Button>
 
-          <Button variant="contained" onClick={() => navigate("/menu/1")}>
+          <Button variant="contained" size="large" onClick={() => navigate("/menu/1")}>
             View Menu
           </Button>
 
-          <Button variant="contained" onClick={() => navigate("/kitchen")}>
+          <Button variant="contained" size="large" onClick={() => navigate("/kitchen")}>
             Kitchen View
-          </Button>
-
-          <Button variant="outlined" color="error" onClick={logout}>
-            Logout
           </Button>
         </Box>
       </Paper>
 
-      <Paper sx={{ p: 4, mt: 3 }}>
-        <Typography variant="h5" gutterBottom>
-          Add Menu Item
-        </Typography>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", md: "380px 1fr" },
+          gap: 3,
+          alignItems: "start",
+        }}
+      >
+        <Paper
+          sx={{
+            p: { xs: 3, md: 4 },
+            borderRadius: 2,
+            border: "1px solid #e6e8ef",
+            boxShadow: "0 12px 30px rgba(31, 41, 55, 0.06)",
+          }}
+        >
+          <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
+            Add Menu Item
+          </Typography>
 
-        <Stack spacing={2}>
-          <TextField
-            fullWidth
-            label="Item name"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-          />
+          <Typography sx={{ color: "text.secondary", mb: 3 }}>
+            Add a new dish and choose if customers can order it today.
+          </Typography>
 
-          <TextField
-            fullWidth
-            label="Price"
-            type="number"
-            value={price}
-            onChange={(event) => setPrice(event.target.value)}
-          />
+          <Stack spacing={2}>
+            <TextField
+              fullWidth
+              label="Item name"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+            />
 
-          <TextField
-            fullWidth
-            select
-            label="Category"
-            value={category}
-            onChange={(event) => setCategory(event.target.value)}
-          >
-            {categories.map((categoryOption) => (
-              <MenuItem key={categoryOption} value={categoryOption}>
-                {categoryOption}
-              </MenuItem>
-            ))}
-          </TextField>
+            <TextField
+              fullWidth
+              label="Price"
+              type="number"
+              value={price}
+              onChange={(event) => setPrice(event.target.value)}
+            />
 
-          <FormControlLabel
-            control={
-              <Switch
-                checked={available}
-                onChange={(event) => setAvailable(event.target.checked)}
-              />
-            }
-            label="Available"
-          />
-
-          <Button variant="contained" onClick={addMenuItem}>
-            Add To Menu
-          </Button>
-        </Stack>
-
-        <Divider sx={{ my: 3 }} />
-
-        <Typography variant="h6" gutterBottom>
-          Current Menu
-        </Typography>
-
-        <Stack spacing={1}>
-          {menuItems.map((item) => (
-            <Box
-              key={item._id}
-              sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}
+            <TextField
+              fullWidth
+              select
+              label="Category"
+              value={category}
+              onChange={(event) => setCategory(event.target.value)}
             >
-              <Typography>
-                {item.name} - {item.category}
+              {categories.map((categoryOption) => (
+                <MenuItem key={categoryOption} value={categoryOption}>
+                  {categoryOption}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={available}
+                  onChange={(event) => setAvailable(event.target.checked)}
+                />
+              }
+              label="Available"
+            />
+
+            <Button variant="contained" size="large" onClick={addMenuItem}>
+              Add To Menu
+            </Button>
+          </Stack>
+        </Paper>
+
+        <Paper
+          sx={{
+            p: { xs: 3, md: 4 },
+            borderRadius: 2,
+            border: "1px solid #e6e8ef",
+            boxShadow: "0 12px 30px rgba(31, 41, 55, 0.06)",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 2,
+              mb: 2,
+            }}
+          >
+            <Box>
+              <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                Current Menu
               </Typography>
-              <Typography>
-                ${item.price} {item.available ? "" : "(Unavailable)"}
+              <Typography sx={{ color: "text.secondary" }}>
+                {menuItems.length} items saved
               </Typography>
             </Box>
-          ))}
-        </Stack>
-      </Paper>
+          </Box>
+
+          <Divider sx={{ mb: 2 }} />
+
+          <Stack spacing={1.5}>
+            {menuItems.map((item) => (
+              <Box
+                key={item._id}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: 2,
+                  p: 2,
+                  border: "1px solid #eef0f4",
+                  borderRadius: 2,
+                  backgroundColor: "#fbfcfe",
+                }}
+              >
+                <Box>
+                  <Typography sx={{ fontWeight: 700 }}>{item.name}</Typography>
+                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                    {item.category}
+                  </Typography>
+                </Box>
+
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                  <Typography sx={{ fontWeight: 700 }}>${item.price}</Typography>
+                  <Chip
+                    size="small"
+                    label={item.available ? "Available" : "Hidden"}
+                    color={item.available ? "success" : "default"}
+                  />
+                </Stack>
+              </Box>
+            ))}
+          </Stack>
+        </Paper>
+      </Box>
     </Container>
   );
 }

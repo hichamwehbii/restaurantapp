@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { MenuItem } from "./menu.model";
+import { createMenuItemSchema } from "./menu.schema";
 
 export const menuRouter = Router();
 
@@ -14,15 +15,17 @@ menuRouter.get("/", async (_req, res) => {
 
 menuRouter.post("/", async (req, res) => {
   try {
-    const { name, price, category, available } = req.body;
+    const parsedBody = createMenuItemSchema.safeParse(req.body);
 
-    if (!name || !category || price === undefined || Number(price) < 0) {
+    if (!parsedBody.success) {
       return res.status(400).json({ message: "Invalid menu item data" });
     }
 
+    const { name, price, category, available } = parsedBody.data;
+
     const menuItem = new MenuItem({
       name,
-      price: Number(price),
+      price,
       category,
       available: available ?? true,
     });
